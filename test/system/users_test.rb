@@ -2,11 +2,22 @@ require "application_system_test_case"
 
 class UsersTest < ApplicationSystemTestCase
   # switch to display Browser
-  driven_by :selenium, using: :headless_chrome
-  # driven_by :selenium, using: :chrome
+  # driven_by :selenium, using: :headless_chrome
+  driven_by :selenium, using: :chrome
 
   def setup
     @user = User.create(email: "user@example.com", password: "foobar", password_confirmation: "foobar")
+  end
+
+  test "signup failed with invalid user without email" do
+    visit signup_url
+    fill_in "Email", with: nil
+    fill_in "Password", with: "foobar"
+    fill_in "Confirmation", with: "foobar"
+    click_button "Sign up"
+    assert_no_text "Signup success!"
+    assert_text "The form contains 1 error."
+    assert_text "Email can't be blank"
   end
 
   test "login success with exist user" do
